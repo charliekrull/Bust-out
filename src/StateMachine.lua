@@ -23,5 +23,5 @@ function StateMachine:update(dt)
 end
 
 function StateMachine:render()
-    self.current.render()
+    self.current:render()
 end
