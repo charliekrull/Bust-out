@@ -17,6 +17,9 @@ require 'src/constants'
 --the paddle as we know it
 require 'src/Paddle'
 
+--the ball as we throw it
+require 'src/Ball'
+
 --A Basic state machine class that spreads the bugs across many files instead of one big one
 require 'src/StateMachine'
 
