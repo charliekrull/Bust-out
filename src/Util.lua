@@ -100,3 +100,10 @@ function GenerateQuadsBalls(atlas)
 
     return quads
 end
+
+--[[
+    Pieces out the bricks from the sprite sheet.
+]]
+function GenerateQuadsBricks(atlas)
+    return table.slice(GenerateQuads(atlas, 32, 16), 1, 21)
+end
