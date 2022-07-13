@@ -20,8 +20,14 @@ require 'src/Paddle'
 --the ball as we throw it
 require 'src/Ball'
 
+--the bricks we throw it at
+require 'src/Brick'
+
 --A Basic state machine class that spreads the bugs across many files instead of one big one
 require 'src/StateMachine'
+
+--The think that makes the levels
+require 'src/LevelMaker'
 
 --utility functions for splitting sprite sheet into various Quads of differing sizes for the various components
 --of our game
