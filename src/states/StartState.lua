@@ -1,6 +1,6 @@
 --[[
     Represents the state the game is in when we've just started;
-    should simply display "Breakout" in large text,
+    should simply display "Bust-out" in large text,
     as well as a message to press Enter to begin
 ]]
 
@@ -28,7 +28,12 @@ function StartState:update(dt)
         gSounds['confirm']:play()
 
         if highlighted == 1 then
-            gStateMachine:change('play')
+            gStateMachine:change('serve', {
+                paddle = Paddle(1),
+                bricks = LevelMaker.createMap(),
+                health = 3,
+                score = 0
+            })
         end
     end
 

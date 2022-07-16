@@ -11,22 +11,22 @@
 
 PlayState = Class{__includes = BaseState}
 
-function PlayState:init()
-    self.paddle = Paddle()
+function PlayState:enter(params)
+    self.paddle = params.paddle
 
     --initialize ball with skin #1. Different skins = different sprites
-    self.ball = Ball(1)
+    self.ball = params.ball
+    --my twist on starting the ball. it will either go left, right or straight down
+    self.ball.dx = math.random(200, 400) * math.random(-1, 1)
+    self.ball.dy = math.random(-70, -85)
+    self.health = params.health
+    self.score = params.score
 
-    self.ball.dx = math.random(-200, 200)
-    self.ball.dy = math.random(-50, -60)
 
-    --give ball position in the center
-    self.ball.x = VIRTUAL_WIDTH / 2 - 4
-    self.ball.y = VIRTUAL_HEIGHT - 42
     self.paused = false
 
     --use the "static" createMap function to generate a brick table
-    self.bricks = LevelMaker.createMap()
+    self.bricks = params.bricks
 end
 
 function PlayState:update(dt)
@@ -50,8 +50,20 @@ function PlayState:update(dt)
     self.ball:update(dt)
 
     if self.ball:collides(self.paddle) then
-        --reverse Y Velocity if collision detected between paddle and ball
-        self.ball.dy = -self.ball.dy
+        --raise ball above paddle in case it goes below it, then reverse dy
+            self.ball.y = self.paddle.y - 8
+            self.ball.dy = -self.ball.dy
+
+        --tweak angle of the bounce based on where it hits the paddle
+        --if we hit the paddle on the left side moving left
+        if self.ball.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
+            self.ball.dx = -50 + -(8 *(self.paddle.x + self.paddle.width / 2 - self.ball.x))
+        
+            --if we hit the paddle on the right side moving right
+        elseif self.ball.x > self.paddle.x + (self.paddle.width/2) and self.paddle.dx > 0 then
+            self.ball.dx = 50 + (8 * math.abs(self.paddle.x + self.paddle.width/2 - self.ball.x))
+        
+        end
         gSounds['paddle-hit']:play()
     end
     --detect collision across all bricks with the ball
@@ -62,6 +74,55 @@ function PlayState:update(dt)
             
             --trigger the brick's hit function, removing it from play
             brick:hit()
+            self.score = self.score + 10
+
+            --collision code for bricks
+            --check to see what side the ball hit through math
+
+            --left edge
+            if self.ball.x + 2 < brick.x and self.ball.dx > 0 then
+                
+                self.ball.dx = -self.ball.dx
+                self.ball.x = brick.x - self.ball.width
+            --right edge
+            elseif self.ball.x + 6 > brick.x + brick.width and self.ball.dx < 0 then
+                self.ball.dx = -self.ball.dx
+                self.ball.x = brick.x + 32
+            --top edge
+            elseif self.ball.y < brick.y then
+                self.ball.dy = -self.ball.dy
+                self.ball.y = brick.y - self.ball.height
+
+            else --it's a bottom collision
+                self.ball.dy = -self.ball.dy
+                self.ball.y = brick.y + 16
+            end
+
+            --speed up the ball a little in the y direction
+            self.ball.dy = self.ball.dy * 1.03
+
+            --only allow colliding with one brick, for corners
+            break
+        end
+    end
+
+    if self.ball.y > VIRTUAL_HEIGHT then --player missed
+        self.health = self.health - 1
+        gSounds['hurt']:play()
+
+        if self.health == 0 then --ran out of health, go to game over
+            gStateMachine:change('game-over', {
+                score = self.score
+            })
+
+            
+        else
+            gStateMachine:change('serve', {--otherwise, serve
+                paddle = self.paddle,
+                bricks = self.bricks,
+                health = self.health,
+                score = self.score
+            })
         end
     end
 
@@ -76,9 +137,12 @@ function PlayState:render()
     for k, brick in pairs(self.bricks) do
         brick:render()
     end
-    
+
     self.paddle:render()
     self.ball:render()
+
+    renderScore(self.score)
+    renderHealth(self.health)
 
     if self.paused then
         love.graphics.setFont(gFonts['large'])

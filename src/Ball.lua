@@ -69,11 +69,6 @@ function Ball:update(dt)
         gSounds['wall-hit']:play()
     end
 
-    if self.y >= VIRTUAL_HEIGHT - 8 then
-        self.y = VIRTUAL_HEIGHT - 8
-        self.dy = -self.dy
-        gSounds['wall-hit']:play()
-    end
 end
 
 function Ball:render()

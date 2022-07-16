@@ -38,7 +38,9 @@ function love.load()
     gFrames = {
         ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
         ['balls'] = GenerateQuadsBalls(gTextures['main']),
-        ['bricks'] = GenerateQuadsBricks(gTextures['main'])
+        ['bricks'] = GenerateQuadsBricks(gTextures['main']),
+        ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9)
+        
     }
 
     --setup our virtual resolution
@@ -72,7 +74,10 @@ function love.load()
     --the state machine that will transition us between states, as it does 
     gStateMachine = StateMachine {
         ['start'] = function() return StartState() end,
-        ['play'] = function() return PlayState() end
+        ['play'] = function() return PlayState() end,
+        ['serve'] = function() return ServeState() end,
+        ['game-over'] = function() return GameOverState() end
+        
     }
 
     gStateMachine:change('start')
@@ -124,7 +129,7 @@ function love.draw()
     gStateMachine:render()
     
     --display fps for debuggery. comment out to disable
-    displayFPS()
+    --displayFPS()
     
     push:apply('end') --stop drawing at virtual resolution
 end
@@ -134,4 +139,24 @@ function displayFPS()
     love.graphics.setFont(gFonts['small'])
     love.graphics.setColor(0, 1, 0, 1)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
+end
+
+function renderHealth(health)
+    local healthX = VIRTUAL_WIDTH - 100
+
+    --render the amount of health
+    for i = 1, health do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][1], healthX, 4)
+        healthX= healthX + 11
+    end
+
+    for i= 1, 3 - health do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][2], healthX, 4)
+        healthX = healthX + 11
+    end
+end
+
+function renderScore(score)
+    love.graphics.setFont(gFonts['small'])
+    love.graphics.print('Score: '..tostring(score), VIRTUAL_WIDTH - 60, 5)
 end
