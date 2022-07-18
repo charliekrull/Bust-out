@@ -21,12 +21,15 @@ function PlayState:enter(params)
     self.ball.dy = math.random(-70, -85)
     self.health = params.health
     self.score = params.score
+    self.level = params.level
 
 
     self.paused = false
 
     --use the "static" createMap function to generate a brick table
     self.bricks = params.bricks
+
+    
 end
 
 function PlayState:update(dt)
@@ -72,9 +75,23 @@ function PlayState:update(dt)
         --only check collision if we're in play
         if brick.inPlay and self.ball:collides(brick) then
             
-            --trigger the brick's hit function, removing it from play
+            --trigger the brick's hit function, removing it from play or changing color
+            --score it
             brick:hit()
-            self.score = self.score + 10
+            self.score = self.score + (brick.tier * 200 + brick.color * 25)
+
+            --check for victory because we've just hit a brick
+            if self:checkVictory() then
+                gSounds['victory']:play()
+
+                gStateMachine:change('victory', {
+                    level = self.level,
+                    paddle = self.paddle,
+                    health = self.health,
+                    score = self.score,
+                    ball = self.ball
+                })
+            end
 
             --collision code for bricks
             --check to see what side the ball hit through math
@@ -126,6 +143,11 @@ function PlayState:update(dt)
         end
     end
 
+    --to render particle systems
+    for k, brick in pairs(self.bricks) do
+        brick:update(dt)
+    end
+
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
     end
@@ -138,6 +160,11 @@ function PlayState:render()
         brick:render()
     end
 
+    --render all particle systems
+    for k, brick in pairs(self.bricks) do
+        brick:renderParticles()
+    end
+
     self.paddle:render()
     self.ball:render()
 
@@ -148,4 +175,14 @@ function PlayState:render()
         love.graphics.setFont(gFonts['large'])
         love.graphics.printf('PAUSED', 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
     end
+end
+
+function PlayState:checkVictory()
+    for k, brick in pairs(self.bricks) do
+        if brick.inPlay then
+            return false
+        end
+    end
+
+    return true
 end
