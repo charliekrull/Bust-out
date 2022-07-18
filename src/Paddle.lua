@@ -13,7 +13,7 @@ Paddle = Class{}
     world horizontally, toward the bottom
 ]]
 
-function Paddle:init()
+function Paddle:init(skin)
     self.x = VIRTUAL_WIDTH / 2 - 32
     self.y = VIRTUAL_HEIGHT - 32
 
@@ -23,7 +23,7 @@ function Paddle:init()
     self.width = 64
     self.height = 16
     --the skin changes paddle color, used to offset us into gPaddleSkins later
-    self.skin = 1
+    self.skin = skin
     --which of the four paddle sizes we currently are; 2 is the starting size, 1 up from the smallest
     self.size = 2
 end
