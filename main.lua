@@ -90,6 +90,10 @@ function love.load()
     gStateMachine:change('start', {
         highScores = loadHighScores()
     })
+
+    gSounds['music']:play()
+    gSounds['music']:setLooping(true)
+
     --a table we'll use to keep track of the keys pressed this frame,
     --and track input in other functions
     love.keyboard.keysPressed = {}
