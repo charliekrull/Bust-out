@@ -12,6 +12,10 @@ StartState = Class{__includes = BaseState}
 --Which option on the menu we are highlighting
 local highlighted = 1
 
+function StartState:enter(params)
+    self.highScores = params.highScores
+end
+
 function StartState:update(dt)
     --toggle highlighted option if we press a button
     if love.keyboard.wasPressed('up') or love.keyboard.wasPressed('down') then
@@ -34,6 +38,11 @@ function StartState:update(dt)
                 health = 3,
                 score = 0,
                 level = 1
+            })
+
+        else
+            gStateMachine:change('high-scores', {
+                highScores = self.highScores
             })
         end
     end
