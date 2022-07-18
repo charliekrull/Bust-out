@@ -40,7 +40,7 @@ function LevelMaker.createMap(level)
         --whether to enable skipping:
         local skipPattern = math.random(1, 2) == 1 and true or false
         --whether to alternate color 
-        local alternatPattern = math.random(1, 2) == 1 and true or false
+        local alternatePattern = math.random(1, 2) == 1 and true or false
         
         --choose 2 colors to alternate between
         local alternateColor1 = math.random(1, highestColor)
