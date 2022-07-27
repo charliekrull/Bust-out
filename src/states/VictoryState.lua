@@ -11,6 +11,10 @@ function VictoryState:enter(params)
     self.health = params.health
     self.ball = params.ball
     self.highScores = params.highScores
+
+    --reset paddle size so powerups go away
+    self.paddle.size = 2
+    self.paddle.width = 64
 end
 
 function VictoryState:update(dt)
@@ -44,5 +48,5 @@ function VictoryState:render()
 
     --instructions text
     love.graphics.setFont(gFonts['medium'])
-    love.graphics.printf('Press Enter to Serve!', 0, VIRTUAL_HEIGHT/2, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Press Enter to continue!', 0, VIRTUAL_HEIGHT/2, VIRTUAL_WIDTH, 'center')
 end
