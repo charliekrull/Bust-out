@@ -107,3 +107,15 @@ end
 function GenerateQuadsBricks(atlas)
     return table.slice(GenerateQuads(atlas, 32, 16), 1, 21)
 end
+
+function GenerateQuadsPowerups(atlas)
+    local quads = {}
+    
+    quads['label'] = love.graphics.newQuad(16, 192, 16, 16, atlas:getDimensions())
+    quads['shrink'] = love.graphics.newQuad(96, 192, 16, 16, atlas:getDimensions())
+    quads['grow'] = love.graphics.newQuad(112, 192, 16, 16, atlas:getDimensions())
+    quads['ball-speed-up'] = love.graphics.newQuad(128, 192, 16, 16, atlas:getDimensions())
+
+    return quads
+    
+end

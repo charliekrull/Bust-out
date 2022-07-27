@@ -23,6 +23,9 @@ require 'src/Ball'
 --the bricks we throw it at
 require 'src/Brick'
 
+--powerups the player can get
+require 'src/Powerup'
+
 --A Basic state machine class that spreads the bugs across many files instead of one big one
 require 'src/StateMachine'
 

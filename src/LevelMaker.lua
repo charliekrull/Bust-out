@@ -96,6 +96,14 @@ function LevelMaker.createMap(level)
     end
 
 
+    
+    for i = 0, #bricks / 20 do --for every 10 bricks, make one random brick a powerup brick
+        local choice = math.random(1, #bricks)
+        bricks[choice].hasPowerup = true
+        
+    end
+
+
     if #bricks == 0 then
         return self.createMap(level)
 

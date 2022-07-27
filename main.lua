@@ -42,9 +42,13 @@ function love.load()
         ['balls'] = GenerateQuadsBalls(gTextures['main']),
         ['bricks'] = GenerateQuadsBricks(gTextures['main']),
         ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9),
-        ['arrows'] = GenerateQuads(gTextures['arrows'], 24, 24)
+        ['arrows'] = GenerateQuads(gTextures['arrows'], 24, 24),
+        ['powerups'] = GenerateQuadsPowerups(gTextures['main'])
         
     }
+
+    gPowerupsList = {'shrink', 'grow', 'ball-speed-up'}
+   
 
     --setup our virtual resolution
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -137,6 +141,7 @@ function love.draw()
         0, --no rotation
         VIRTUAL_WIDTH / (backgroundWidth - 1), --scale factors on the x and y axes
         VIRTUAL_HEIGHT / (backgroundHeight - 1))
+
 
     --render the current state to the screen
     gStateMachine:render()

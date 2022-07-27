@@ -17,7 +17,7 @@ function PlayState:enter(params)
     --initialize ball with skin #1. Different skins = different sprites
     self.ball = params.ball
     --my twist on starting the ball. it will either go left, right or straight down
-    self.ball.dx = math.random(200, 400) * math.random(-1, 1)
+    self.ball.dx = 0 --fix this you clod
     self.ball.dy = math.random(-70, -85)
     self.health = params.health
     self.score = params.score
@@ -29,6 +29,7 @@ function PlayState:enter(params)
 
     --use the "static" createMap function to generate a brick table
     self.bricks = params.bricks
+    self.powerupsInPlay = {}
 
     
 end
@@ -79,6 +80,11 @@ function PlayState:update(dt)
             --trigger the brick's hit function, removing it from play or changing color
             --score it
             brick:hit()
+            if brick.hasPowerup and not brick.inPlay then
+                brick.hasPowerup = false
+                self:spawnPowerup(brick)
+
+            end
             self.score = self.score + (brick.tier * 200 + brick.color * 25)
 
             --check for victory because we've just hit a brick
@@ -153,6 +159,38 @@ function PlayState:update(dt)
         brick:update(dt)
     end
 
+    for k, powerup in pairs(self.powerupsInPlay) do
+
+        powerup:update(dt)
+        
+        
+
+        if powerup:collides(self.paddle) then
+            if powerup.name == 'shrink' then
+                self.paddle.size = math.max(1, self.paddle.size - 1)
+                self.paddle.width = math.max(32, self.paddle.width - 32)
+                
+
+            elseif powerup.name == 'grow' then
+                self.paddle.size = math.min(4, self.paddle.size + 1)
+                self.paddle.width = math.min(128, self.paddle.width + 32)
+                
+
+            elseif powerup.name == 'ball-speed-up' then
+                self.ball.dx = self.ball.dx * 1.2
+                self.ball.dy = self.ball.dy * 1.5
+                   
+            end
+            powerup.remove = true
+        end
+
+        if powerup.remove then
+            self.powerupsInPlay[k] = nil
+        end
+
+        
+    end
+
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
     end
@@ -163,6 +201,11 @@ function PlayState:render()
     --render bricks
     for k, brick in pairs(self.bricks) do
         brick:render()
+    end
+
+    --render any powerups in play
+    for k, powerup in pairs(self.powerupsInPlay) do
+        powerup:render()
     end
 
     --render all particle systems
@@ -190,4 +233,10 @@ function PlayState:checkVictory()
     end
 
     return true
+end
+
+function PlayState:spawnPowerup(brick)
+    local choice = math.random(1, #gPowerupsList)
+    local pow = Powerup(gPowerupsList[choice], brick.x + 8, brick.y)
+    table.insert(self.powerupsInPlay, pow)
 end

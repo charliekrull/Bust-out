@@ -54,6 +54,9 @@ function Brick:init(x, y)
     --should this brick be rendered and updated
     self.inPlay = true
 
+    --whether this brick should spawn a powerup on its destruction
+    self.hasPowerup = false
+
     --particle system belonging to the brick,
     --emitted on hit
     self.psystem = love.graphics.newParticleSystem(gTextures['particle'], 64)
@@ -112,12 +115,17 @@ function Brick:hit()
     if not self.inPlay then --if brick is removed from play, play a second sound
         gSounds['brick-hit-1']:stop()
         gSounds['brick-hit-1']:play()
+       
+        
     end
 end
+
 
 function Brick:update(dt)
     self.psystem:update(dt)
 end
+
+
 
 function Brick:render()
     if self.inPlay then
@@ -126,6 +134,11 @@ function Brick:render()
     --draw correct block
             gFrames['bricks'][1+((self.color - 1) * 4) + self.tier],
             self.x, self.y)
+
+        if self.hasPowerup then --if this block contains a powerup, draw a green box on it
+            love.graphics.draw(gTextures['main'], gFrames['powerups']['label'],
+            self.x + self.width/2 - 8, self.y)
+        end
     end
 end
 
