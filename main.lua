@@ -28,12 +28,18 @@ function love.load()
 
     --load in all the pretty graphics we'll be using
     gTextures = {
-        ['background'] = love.graphics.newImage('graphics/backgrounds/Background-1.png'),
+        ['backgrounds'] = {love.graphics.newImage('graphics/backgrounds/Background-1.png'),
+        love.graphics.newImage('graphics/backgrounds/Background-2.png'),
+        love.graphics.newImage('graphics/backgrounds/Background-3.png'),
+        love.graphics.newImage('graphics/backgrounds/Background-4.png')},
+
         ['main'] = love.graphics.newImage('graphics/breakout.png'),
         ['arrows'] = love.graphics.newImage('graphics/arrows.png'),
         ['hearts'] = love.graphics.newImage('graphics/hearts.png'),
         ['particle'] = love.graphics.newImage('graphics/particle.png')
     }
+
+   
 
     --Quads we will generate for all of our textures; Quads allow us
     --to show only part of a texture, not the whole thing

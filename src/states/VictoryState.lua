@@ -35,6 +35,11 @@ function VictoryState:update(dt)
     end
 end
 
+function VictoryState:exit()
+    local choice = math.random(1, 4) --every time a new level starts, get a new background image
+    gTextures['background'] = gTextures['backgrounds'][choice]
+end
+
 function VictoryState:render()
     self.paddle:render()
     self.ball:render()

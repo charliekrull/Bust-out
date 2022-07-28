@@ -14,6 +14,9 @@ local highlighted = 1
 
 function StartState:enter(params)
     self.highScores = params.highScores
+
+     --set starting/new background
+     gTextures['background'] = gTextures['backgrounds'][math.random(1, 4)]
 end
 
 function StartState:update(dt)

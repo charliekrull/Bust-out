@@ -18,7 +18,7 @@ function PlayState:enter(params)
 
     self.balls = {params.ball}
     for k, ball in pairs(self.balls) do
-        ball.dx = 0
+        ball.dx = self.paddle.dx * 1.5
         ball.dy = -85 --for right now, serve straight up fairly slow
     end
     self.health = params.health
