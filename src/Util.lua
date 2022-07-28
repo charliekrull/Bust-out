@@ -115,6 +115,7 @@ function GenerateQuadsPowerups(atlas)
     quads['shrink'] = love.graphics.newQuad(96, 192, 16, 16, atlas:getDimensions())
     quads['grow'] = love.graphics.newQuad(112, 192, 16, 16, atlas:getDimensions())
     quads['ball-speed-up'] = love.graphics.newQuad(128, 192, 16, 16, atlas:getDimensions())
+    quads['multiball'] = love.graphics.newQuad(48, 192, 16, 16, atlas:getDimensions())
 
     return quads
     

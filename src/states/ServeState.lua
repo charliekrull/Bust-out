@@ -14,9 +14,8 @@ function ServeState:enter(params)
     self.level = params.level
     self.highScores = params.highScores
 
-    --init new ball (random color why not?)
-    self.ball = Ball()
-    self.ball.skin = math.random(7)
+    --init new ball (random color)
+    self.ball = Ball(math.random(1, 7))
 end
 
 function ServeState:update(dt)

@@ -47,7 +47,7 @@ function love.load()
         
     }
 
-    gPowerupsList = {'shrink', 'grow', 'ball-speed-up'}
+    gPowerupsList = {'shrink', 'grow', 'ball-speed-up', 'multiball'}
    
 
     --setup our virtual resolution
