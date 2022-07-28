@@ -202,7 +202,7 @@ function PlayState:update(dt)
                 
 
             elseif powerup.name == 'ball-speed-up' then
-                for k, ball in self.balls do
+                for k, ball in pairs(self.balls) do
                     ball.dx = ball.dx * 1.2
                     ball.dy = ball.dy * 1.5
                 end
