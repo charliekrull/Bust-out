@@ -99,7 +99,6 @@ function Brick:hit()
     if self.tier > 0 then
         if self.color == 1 then
             self.tier = self.tier - 1
-            self.color = 5
         else
             self.color = self.color - 1
         end
@@ -132,7 +131,7 @@ function Brick:render()
         love.graphics.draw(gTextures['main'],
     --multiply color - 1  by 4 to get the color offset, then add tier to that
     --draw correct block
-            gFrames['bricks'][1+((self.color - 1) * 4) + self.tier],
+            gFrames['bricks'][1 + ((self.color - 1) * 4) + self.tier],
             self.x, self.y)
 
         if self.hasPowerup then --if this block contains a powerup, draw a green box on it

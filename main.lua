@@ -145,7 +145,7 @@ function love.draw()
 
     if gTextures['background'] == gTextures['backgrounds'][2] or
         gTextures['background'] == gTextures['backgrounds'][3] then
-            love.graphics.setColor(.4, .4, .4, 1)
+            love.graphics.setColor(.4, .4, .4, 1) --darken the background if it's got lots of bright white light
         end
 
     love.graphics.draw(gTextures['background'], 0, 0, --at coordinates (0, 0)

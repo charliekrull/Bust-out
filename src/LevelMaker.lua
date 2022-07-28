@@ -19,16 +19,12 @@ MULTI_PYRAMID = 3
 SOLID = 1
 ALTERNATE = 2
 SKIP = 3
-NONE = 4
+
 
 function LevelMaker.createMap(level)
     bricks = {}
 
-    local numRows = math.random(1, 5)
-    local numCols = math.random(7, 13)
-    if numCols % 2 == 0 then
-        numCols = numCols + 1
-    end
+    local globalPattern = 2
 
     --highest possible brick spawned on a level, can't be above 3
     local highestTier = math.min(3, math.floor(level/5))
@@ -36,68 +32,91 @@ function LevelMaker.createMap(level)
     --highest possible color
     local highestColor = math.min(5, level % 5 + 3)
 
-    for y = 1, numRows do
-        --whether to enable skipping:
-        local skipPattern = math.random(1, 2) == 1 and true or false
-        --whether to alternate color 
-        local alternatePattern = math.random(1, 2) == 1 and true or false
-        
-        --choose 2 colors to alternate between
-        local alternateColor1 = math.random(1, highestColor)
-        local alternateColor2 = math.random(1, highestColor)
-        local alternateTier1 = math.random(0, highestTier)
-        local alternateTier2 = math.random(0, highestTier)
+    if globalPattern == 1 then
 
-        --used when we want to skip blocks with skipPattern
-        local skipFlag = math.random(2) == 1 and true or false
+        local numRows = math.random(1, 5)
+        local numCols = math.random(7, 13)
+        if numCols % 2 == 0 then
+            numCols = numCols + 1
+        end
 
-        --used when we want to alternate block color or tier
-        local alternateFlag = math.random(2) == 1 and true or false
-
-        --solid color used when not alternating
-        local solidColor = math.random(1, highestColor)
-        --solid tier used when not alternating
-        local solidTier = math.random(0, highestTier)
-
-        for x = 1, numCols do
-
-            --if we're in a skipping pattern and it's a skip iteration
-            if skipPattern and skipFlag then
-                skipFlag = not skipFlag
-
-                goto continue
-
-            else
-                skipFlag = not skipFlag
+        for y = 1, numRows do
+            --whether to enable skipping:
+            local skipPattern = math.random(1, 2) == 1 and true or false
+            --whether to alternate color 
+            local alternatePattern = math.random(1, 2) == 1 and true or false
+            
+            --choose 2 colors to alternate between
+            local alternateColor1 = math.random(1, highestColor)
+            local alternateColor2 = math.random(1, highestColor)
+            local alternateTier1 = math.random(0, highestTier)
+            local alternateTier2 = math.random(0, highestTier)
+    
+            --used when we want to skip blocks with skipPattern
+            local skipFlag = math.random(2) == 1 and true or false
+    
+            --used when we want to alternate block color or tier
+            local alternateFlag = math.random(2) == 1 and true or false
+    
+            --solid color used when not alternating
+            local solidColor = math.random(1, highestColor)
+            --solid tier used when not alternating
+            local solidTier = math.random(0, highestTier)
+    
+            for x = 1, numCols do
+    
+                --if we're in a skipping pattern and it's a skip iteration
+                if skipPattern and skipFlag then
+                    skipFlag = not skipFlag
+    
+                    goto continue
+    
+                else
+                    skipFlag = not skipFlag
+                end
+                b = Brick(--calculate x-coordinate
+                            (x-1) * 32 + 8 + (13 - numCols) * 16,
+                        y * 16)
+    
+                if alternatePattern and alternateFlag then
+                    b.color = alternateColor1
+                    b.tier = alternateTier1
+                    alternateFlag = not alternateFlag
+                else
+                    b.color = alternateColor2
+                    b.tier = alternateTier2
+                    alternateFlag = not alternateFlag
+                end
+    
+                if not alternatePattern then
+                    b.color = solidColor
+                    b.tier = solidTier
+                end
+                        
+                table.insert(bricks, b)
+    
+                ::continue:: --do nothing (because we are skipping a brick)
             end
-            b = Brick(--calculate x-coordinate
-                        (x-1) * 32 + 8 + (13 - numCols) * 16,
-                    y * 16)
+        end
 
-            if alternatePattern and alternateFlag then
-                b.color = alternateColor1
-                b.tier = alternateTier1
-                alternateFlag = not alternateFlag
-            else
-                b.color = alternateColor2
-                b.tier = alternateTier2
-                alternateFlag = not alternateFlag
+    elseif globalPattern == SINGLE_PYRAMID then
+        local x = VIRTUAL_WIDTH / 2 - 16
+        local y = 0
+
+        for row = 0, 6 do
+            for col = 0, row do
+                local b = Brick(x + (col * 32), y + (row * 16))
+                if row == 6 then
+                    b.tier = 1
+                end
+                table.insert(bricks, b)
             end
-
-            if not alternatePattern then
-                b.color = solidColor
-                b.tier = solidTier
-            end
-                    
-            table.insert(bricks, b)
-
-            ::continue:: --do nothing (because we are skipping a brick)
+            x = VIRTUAL_WIDTH/2 - ((row + 2) * 16)
         end
     end
 
-
     
-    for i = 0, #bricks / 20 do --for every 10 bricks, make one random brick a powerup brick
+    for i = 0, #bricks / 20 do --for every 20 bricks, make one random brick a powerup brick
         local choice = math.random(1, #bricks)
         bricks[choice].hasPowerup = true
         

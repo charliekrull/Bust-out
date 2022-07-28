@@ -90,13 +90,17 @@ function PlayState:update(dt)
                 
                 --trigger the brick's hit function, removing it from play or changing color
                 --score it
+                
+                
+                self.score = self.score + (brick.tier * 200 + brick.color * 25)
+
                 brick:hit()
+
                 if brick.hasPowerup and not brick.inPlay then
                     brick.hasPowerup = false
                     self:spawnPowerup(brick)
 
                 end
-                self.score = self.score + (brick.tier * 200 + brick.color * 25)
 
                 --check for victory because we've just hit a brick
                 if self:checkVictory() then
