@@ -135,7 +135,7 @@ function PlayState:update(dt)
                             paddle = self.paddle,
                             health = self.health,
                             score = self.score,
-                            ball = self.balls[1],
+                            balls = self.balls,
                             highScores = self.highScores
                         })
                     end
