@@ -39,6 +39,13 @@ paletteColors = {
         ['r'] = 251,
         ['g'] = 242,
         ['b'] = 54
+    },
+
+    -- Locked/Black
+    [6] = {
+        ['r'] = 255,
+        ['g'] = 255,
+        ['b'] = 255
     }
 }
 
@@ -96,7 +103,11 @@ function Brick:hit()
     gSounds['brick-hit-2']:stop()
     gSounds['brick-hit-2']:play()
 
-    if self.tier > 0 then
+    if self.color == 6 then
+        self.inPlay = false
+    
+
+    elseif self.tier > 0 then 
         if self.color == 1 then
             self.tier = self.tier - 1
         else
@@ -128,11 +139,21 @@ end
 
 function Brick:render()
     if self.inPlay then
-        love.graphics.draw(gTextures['main'],
+        if self.color == 6 then
+            love.graphics.draw(gTextures['main'], gFrames['bricks'][#gFrames['bricks']],
+            self.x, self.y)
+        
+        else
+
+            love.graphics.draw(gTextures['main'],
     --multiply color - 1  by 4 to get the color offset, then add tier to that
     --draw correct block
-            gFrames['bricks'][1 + ((self.color - 1) * 4) + self.tier],
-            self.x, self.y)
+                gFrames['bricks'][1 + ((self.color - 1) * 4) + self.tier],
+                self.x, self.y)
+        end
+
+            
+    
 
         if self.hasPowerup then --if this block contains a powerup, draw a green box on it
             love.graphics.draw(gTextures['main'], gFrames['powerups']['label'],

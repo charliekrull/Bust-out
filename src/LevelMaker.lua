@@ -32,6 +32,10 @@ function LevelMaker.createMap(level)
     --highest possible color
     local highestColor = math.min(5, level % 5 + 3)
 
+    lockBox = math.random(1, 2) == 1 and true or false --[[whether this level will have a key/lock combo
+                                                                global so anything that needs it knows]]
+
+
     if globalPattern == 1 then
 
         local numRows = math.random(1, 5)
@@ -116,9 +120,16 @@ function LevelMaker.createMap(level)
     end
 
     
-    for i = 0, #bricks / 20 do --for every 20 bricks, make one random brick a powerup brick
+    for i = 0, math.floor(#bricks / 20) do --for every 20 bricks, make one random brick a powerup brick
         local choice = math.random(1, #bricks)
         bricks[choice].hasPowerup = true
+        
+    end
+
+    if lockBox then
+        local mid = #bricks / 2
+        local middleBrick = bricks[mid]
+        middleBrick.color = 6
         
     end
 

@@ -105,7 +105,9 @@ end
     Pieces out the bricks from the sprite sheet.
 ]]
 function GenerateQuadsBricks(atlas)
-    return table.slice(GenerateQuads(atlas, 32, 16), 1, 21)
+    local bricks = table.slice(GenerateQuads(atlas, 32, 16), 1, 21)
+    table.insert(bricks, #bricks + 1, love.graphics.newQuad(160, 48, 32, 16, atlas:getDimensions()))
+    return bricks
 end
 
 function GenerateQuadsPowerups(atlas)
@@ -116,6 +118,7 @@ function GenerateQuadsPowerups(atlas)
     quads['grow'] = love.graphics.newQuad(112, 192, 16, 16, atlas:getDimensions())
     quads['ball-speed-up'] = love.graphics.newQuad(128, 192, 16, 16, atlas:getDimensions())
     quads['multiball'] = love.graphics.newQuad(48, 192, 16, 16, atlas:getDimensions())
+    quads['key'] = love.graphics.newQuad(144, 192, 16, 16, atlas:getDimensions())
 
     return quads
     

@@ -32,6 +32,11 @@ function PlayState:enter(params)
     --use the "static" createMap function to generate a brick table
     self.bricks = params.bricks
     self.powerupsInPlay = {}
+    self.hasKey = false
+
+    self.lastServeTime = love.timer.getTime()
+    self.lastUnPauseTime = love.timer.getTime()
+    self.lastKeySpawnTime = love.timer.getTime()
 
     
 end
@@ -40,8 +45,10 @@ function PlayState:update(dt)
     if self.paused then
         if love.keyboard.wasPressed('space') then
             self.paused = false
+            self.lastUnPauseTime = love.timer.getTime()
             gSounds['pause']:play()
             gSounds['music']:play()
+            
 
         else
             return
@@ -53,6 +60,23 @@ function PlayState:update(dt)
         gSounds['music']:pause()
         return    
     
+    end
+
+    if lockBox then
+        local timeSinceLastServe = love.timer.getTime() - self.lastServeTime
+        local timeSinceLastUnPause = love.timer.getTime() - self.lastUnPauseTime
+        local timeSinceLastKeySpawn = love.timer.getTime() - self.lastKeySpawnTime 
+
+        if math.min(timeSinceLastServe, timeSinceLastUnPause, timeSinceLastKeySpawn) > 15 and not self.hasKey then --it's been 15 seconds
+            --Spawn the key
+            self.lastKeySpawnTime = love.timer.getTime()
+            local keyx = math.random(0, VIRTUAL_WIDTH - 16)
+            local keyy = math.random(0, VIRTUAL_HEIGHT / 2)
+            local k = Powerup('key', keyx, keyy)
+            table.insert(self.powerupsInPlay, k)
+
+        end
+
     end
 
     self.paddle:update(dt)
@@ -84,36 +108,66 @@ function PlayState:update(dt)
     for k, brick in pairs(self.bricks) do
 
         for l, ball in pairs(self.balls) do
-    
         --only check collision if we're in play
             if brick.inPlay and ball:collides(brick) then
+                if not (brick.color == 6) then
                 
-                --trigger the brick's hit function, removing it from play or changing color
-                --score it
-                
-                
-                self.score = self.score + (brick.tier * 200 + brick.color * 25)
+                    --trigger the brick's hit function, removing it from play or changing color
+                    --score it
+                    
+                    
+                    self.score = self.score + (brick.tier * 200 + brick.color * 25)
 
-                brick:hit()
+                    brick:hit()
 
-                if brick.hasPowerup and not brick.inPlay then
-                    brick.hasPowerup = false
-                    self:spawnPowerup(brick)
+                    if brick.hasPowerup and not brick.inPlay then
+                        brick.hasPowerup = false
+                        self:spawnPowerup(brick)
 
-                end
+                    end
 
-                --check for victory because we've just hit a brick
-                if self:checkVictory() then
-                    gSounds['victory']:play()
+                    --check for victory because we've just hit a brick
+                    if self:checkVictory() then
+                        gSounds['victory']:play()
 
-                    gStateMachine:change('victory', {
-                        level = self.level,
-                        paddle = self.paddle,
-                        health = self.health,
-                        score = self.score,
-                        ball = self.balls[1],
-                        highScores = self.highScores
-                    })
+                        gStateMachine:change('victory', {
+                            level = self.level,
+                            paddle = self.paddle,
+                            health = self.health,
+                            score = self.score,
+                            ball = self.balls[1],
+                            highScores = self.highScores
+                        })
+                    end
+
+
+                else --it's locked
+                    if self.hasKey then
+                        self.score = self.score + 3000
+
+                        brick:hit()
+
+                        if brick.hasPowerup and not brick.inPlay then
+                            brick.hasPowerup = false
+                            self:spawnPowerup(brick)
+    
+                        end
+                        --good chance this will be the last one, as it's difficult to do.
+                        --so check if we beat the level
+                        --note the key will not carry from round to round (and it shouldn't be possible to finish with a key anyway)
+                        if self:checkVictory() then
+                            gSounds['victory']:play()
+    
+                            gStateMachine:change('victory', {
+                                level = self.level,
+                                paddle = self.paddle,
+                                health = self.health,
+                                score = self.score,
+                                ball = self.balls[1],
+                                highScores = self.highScores
+                            })
+                        end 
+                    end
                 end
 
                 --collision code for bricks
@@ -163,7 +217,8 @@ function PlayState:update(dt)
                     health = self.health,
                     score = self.score,
                     highScores = self.highScores,
-                    level = self.level
+                    level = self.level,
+                    hasKey = self.hasKey
                 })
 
             
@@ -228,7 +283,9 @@ function PlayState:update(dt)
                 table.insert(self.balls, #self.balls + 1, b)
 
                 
-            
+            elseif powerup.name == 'key' then
+                
+                self.hasKey = true
                    
             end
             powerup.remove = true
