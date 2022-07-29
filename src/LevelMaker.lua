@@ -24,7 +24,7 @@ SKIP = 3
 function LevelMaker.createMap(level)
     bricks = {}
 
-    local globalPattern = 2
+    local globalPattern = math.random(1, 2)
 
     --highest possible brick spawned on a level, can't be above 3
     local highestTier = math.min(3, math.floor(level/5))
@@ -36,7 +36,7 @@ function LevelMaker.createMap(level)
                                                                 global so anything that needs it knows]]
 
 
-    if globalPattern == 1 then
+    if globalPattern == NONE then
 
         local numRows = math.random(1, 5)
         local numCols = math.random(7, 13)
@@ -108,11 +108,18 @@ function LevelMaker.createMap(level)
         local y = 0
 
         for row = 0, 6 do
+            rowColor = math.random(1, highestColor)
+
             for col = 0, row do
                 local b = Brick(x + (col * 32), y + (row * 16))
-                if row == 6 then
-                    b.tier = 1
+                if row < 2 then
+                    b.color = highestColor
+                    b.tier = highestTier
+
+                else
+                    b.color = rowColor
                 end
+
                 table.insert(bricks, b)
             end
             x = VIRTUAL_WIDTH/2 - ((row + 2) * 16)
@@ -126,7 +133,7 @@ function LevelMaker.createMap(level)
         
     end
 
-    if lockBox then
+    if lockBox and #bricks > 0 then
         local mid = #bricks / 2
         local middleBrick = bricks[mid]
         middleBrick.color = 6
