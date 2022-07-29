@@ -67,7 +67,7 @@ function PlayState:update(dt)
         local timeSinceLastUnPause = love.timer.getTime() - self.lastUnPauseTime
         local timeSinceLastKeySpawn = love.timer.getTime() - self.lastKeySpawnTime 
 
-        if math.min(timeSinceLastServe, timeSinceLastUnPause, timeSinceLastKeySpawn) > 15 and not self.hasKey then --it's been 15 seconds
+        if math.min(timeSinceLastServe, timeSinceLastUnPause, timeSinceLastKeySpawn) > 15 and (not self.hasKey) then --it's been 15 seconds
             --Spawn the key
             self.lastKeySpawnTime = love.timer.getTime()
             local keyx = math.random(0, VIRTUAL_WIDTH - 16)
@@ -163,7 +163,7 @@ function PlayState:update(dt)
                                 paddle = self.paddle,
                                 health = self.health,
                                 score = self.score,
-                                ball = self.balls[1],
+                                balls = self.balls,
                                 highScores = self.highScores
                             })
                         end 
@@ -333,6 +333,10 @@ function PlayState:render()
     if self.paused then
         love.graphics.setFont(gFonts['large'])
         love.graphics.printf('PAUSED', 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
+    end
+
+    if self.hasKey then
+        love.graphics.draw(gTextures['main'], gFrames['powerups']['key'], VIRTUAL_WIDTH - 16, VIRTUAL_HEIGHT - 16)
     end
 end
 
